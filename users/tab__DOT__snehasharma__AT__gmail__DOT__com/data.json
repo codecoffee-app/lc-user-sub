@@ -1,0 +1,22 @@
+{
+  "submissions": {
+    "trapping-rain-water": [
+      {
+        "url": "1.txt",
+        "status": "Accepted",
+        "timestamp": 1785931787902,
+        "index": 0,
+        "language": "cpp"
+      }
+    ],
+    "two-sum": [
+      {
+        "url": "1.txt",
+        "status": "Wrong Answer",
+        "timestamp": 1785931003420,
+        "index": 0,
+        "language": "cpp"
+      }
+    ]
+  }
+}
