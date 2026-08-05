@@ -2,7 +2,7 @@
   "submissions": {
     "trapping-rain-water": [
       {
-        "url": "1.txt",
+        "url": "1.json",
         "status": "Accepted",
         "timestamp": 1785931787902,
         "index": 0,
@@ -11,7 +11,7 @@
     ],
     "two-sum": [
       {
-        "url": "1.txt",
+        "url": "1.json",
         "status": "Wrong Answer",
         "timestamp": 1785931003420,
         "index": 0,
