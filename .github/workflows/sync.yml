@@ -1,0 +1,45 @@
+name: Sync user submissions
+
+on:
+  repository_dispatch:
+    types: [problems-sync-complete]
+  workflow_dispatch:          # manual retry if users sync failed after problems
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout users repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run sync script
+        run: python scripts/sync.py
+        env:
+          SHEET_URLS: ${{ secrets.SHEET_URLS }}
+          DEFAULT_LIMIT: ${{ secrets.DEFAULT_LIMIT }}
+          STATUS_SHEET_URL: ${{ secrets.STATUS_SHEET_URL }}
+          PROBLEMS_REPO: ${{ secrets.PROBLEMS_REPO }}
+          PROBLEMS_REF: ${{ secrets.PROBLEMS_REF }}
+          # PAT (or fine-grained token) with read access to lc-problems-sub.
+          # Default GITHUB_TOKEN cannot read another private repo.
+          PROBLEMS_READ_TOKEN: ${{ secrets.PROBLEMS_READ_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit & push
+        run: |
+          git config user.name "sync-bot"
+          git config user.email "sync-bot@users.noreply.github.com"
+          git add users
+          git commit -m "sync user submissions $(date -u)" || echo "nothing to commit"
+          git push
