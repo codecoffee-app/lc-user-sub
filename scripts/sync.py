@@ -1,19 +1,18 @@
 """
-Users-repo sync: pull today's sheet batch, compute url/index from the
-problems repo (already updated), and append pointer records into each
-user's data.json.
+Sync script (users repo): after problems sync, read sync-batch.json (one API
+call), re-fetch the same sheet snapshot, look up url/index by sheet_key, and
+append pointer records into users/<encoded-email>/data.json.
 
 Runs AFTER the problems repo sync finishes (repository_dispatch).
 
 Environment variables:
     SHEET_URLS          - comma-separated Apps Script GET endpoints
+                          (must match problems repo, same order)
     STATUS_SHEET_URL    - Apps Script POST endpoint for the status logger
-    PROBLEMS_REPO       - "owner/repo" for lc-problems-sub
-                          (default: codecoffee-app/lc-problems-sub)
-    PROBLEMS_REF        - git ref to read (default: master)
+    PROBLEMS_REPO       - "owner/repo" (default: codecoffee-app/lc-problems-sub)
+    PROBLEMS_REF        - git ref (default: master)
     PROBLEMS_READ_TOKEN - token that can read the problems repo
                           (falls back to GITHUB_TOKEN)
-    DEFAULT_LIMIT       - fallback limit if config.json is missing (default 100)
 """
 
 import os
@@ -26,10 +25,10 @@ from collections import defaultdict
 
 REPO_NAME = "users"
 USERS_BASE_DIR = "users"
+SYNC_BATCH_PATH = "sync-batch.json"
 
 
 def email_to_folder_name(email):
-    """Map an email to a filesystem-safe folder name (same rules as the app)."""
     return (
         email
         .replace("_", "__UND__")
@@ -63,7 +62,6 @@ def fetch_sheet_rows(url):
 
 
 def extract_json_string(row):
-    """Each Apps Script row is a JSON string from column A."""
     if isinstance(row, str):
         return row
     if isinstance(row, dict):
@@ -88,57 +86,13 @@ def parse_submission(raw_json_string):
     required_fields = ("slug", "code", "timestamp", "email", "language", "status")
     missing = [f for f in required_fields if f not in submission]
     if missing:
-        print(f"  Skipping row - missing fields {missing}: {submission}", file=sys.stderr)
+        print(f"  Skipping row - missing fields {missing}", file=sys.stderr)
         return None
 
     return submission
 
 
-def fetch_all_submissions(sheet_urls):
-    all_submissions = []
-    for url in sheet_urls:
-        print(f"Fetching sheet: {url[:40]}...")
-        rows = fetch_sheet_rows(url)
-        print(f"  Got {len(rows)} raw rows")
-        for row in rows:
-            submission = parse_submission(extract_json_string(row))
-            if submission:
-                all_submissions.append(submission)
-    return all_submissions
-
-
-def group_by_problem(submissions):
-    grouped = defaultdict(list)
-    for submission in submissions:
-        grouped[submission["slug"]].append(submission)
-
-    for slug, subs in grouped.items():
-        subs.sort(key=lambda s: int(s["timestamp"]))
-
-    return grouped
-
-
-def is_accepted(submission):
-    return str(submission.get("status", "")).strip().lower() == "accepted"
-
-
-def split_accepted_errors(submissions):
-    accepted, errors = [], []
-    for s in submissions:
-        (accepted if is_accepted(s) else errors).append(s)
-    return accepted, errors
-
-
-def get_default_limit():
-    return int(os.environ.get("DEFAULT_LIMIT", "100"))
-
-
-# ---------------------------------------------------------------------------
-# Problems-repo file reads (GitHub API — only the files we need, no full clone)
-# ---------------------------------------------------------------------------
-
 def problems_repo_config():
-    # Empty strings from unset GitHub secrets must not override defaults.
     repo = os.environ.get("PROBLEMS_REPO") or "codecoffee-app/lc-problems-sub"
     ref = os.environ.get("PROBLEMS_REF") or "master"
     token = (
@@ -149,13 +103,12 @@ def problems_repo_config():
     return repo, ref, token
 
 
-def fetch_problems_json(path):
+def fetch_sync_batch():
     """
-    Fetch a JSON file from the problems repo via the GitHub Contents API.
-    Returns the parsed JSON, or None if the file does not exist (404).
+    One GitHub Contents API call for sync-batch.json written by problems sync.
     """
     repo, ref, token = problems_repo_config()
-    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    url = f"https://api.github.com/repos/{repo}/contents/{SYNC_BATCH_PATH}"
     headers = {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
@@ -166,112 +119,101 @@ def fetch_problems_json(path):
     try:
         resp = requests.get(url, headers=headers, params={"ref": ref}, timeout=30)
     except requests.RequestException as e:
-        print(f"ERROR: failed to fetch {path}: {e}", file=sys.stderr)
+        print(f"ERROR: failed to fetch {SYNC_BATCH_PATH}: {e}", file=sys.stderr)
         sys.exit(1)
 
     if resp.status_code == 404:
-        return None
+        print(
+            f"ERROR: {SYNC_BATCH_PATH} not found in {repo}@{ref}. "
+            "Did problems sync run and push?",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
     if resp.status_code != 200:
         print(
-            f"ERROR: GitHub API {resp.status_code} for {path}: {resp.text[:200]}",
+            f"ERROR: GitHub API {resp.status_code} for {SYNC_BATCH_PATH}: "
+            f"{resp.text[:200]}",
             file=sys.stderr,
         )
         sys.exit(1)
 
     payload = resp.json()
     if payload.get("encoding") != "base64" or "content" not in payload:
-        print(f"ERROR: unexpected GitHub contents response for {path}", file=sys.stderr)
+        print(f"ERROR: unexpected GitHub contents response for {SYNC_BATCH_PATH}",
+              file=sys.stderr)
         sys.exit(1)
 
     raw = base64.b64decode(payload["content"]).decode("utf-8")
-    return json.loads(raw)
+    batch = json.loads(raw)
+    if not isinstance(batch, dict):
+        print("ERROR: sync-batch.json must be a JSON object", file=sys.stderr)
+        sys.exit(1)
+    return batch
 
 
-def load_bucket_cursor(slug, outcome):
+def collect_user_records(sheet_urls, batch):
     """
-    Read post-sync cursor for problems/{outcome}/{slug}/.
-    outcome is "accepted" or "errors".
-
-    Returns (current, limit, len_current_file).
-    Missing config/file → fresh defaults (current=1, limit=DEFAULT, K=0).
+    Re-read sheets in the same URL order as problems. For each response index,
+    look up sheet_key in batch. Missing key = skipped by problems (invalid) or
+    not in today's written set.
     """
-    config_path = f"problems/{outcome}/{slug}/config.json"
-    config = fetch_problems_json(config_path)
+    records = []
+    matched = 0
+    skipped_no_batch = 0
+    skipped_invalid = 0
 
-    if config is None:
-        return 1, get_default_limit(), 0
+    for sheet_num, url in enumerate(sheet_urls, start=1):
+        print(f"Fetching sheet {sheet_num}: {url[:40]}...")
+        rows = fetch_sheet_rows(url)
+        if not isinstance(rows, list):
+            print("  Unexpected response type, skipping sheet.", file=sys.stderr)
+            continue
+        print(f"  Got {len(rows)} raw rows")
 
-    current = int(config.get("current", 1))
-    limit = int(config.get("limit", get_default_limit()))
+        for row_index, row in enumerate(rows):
+            sheet_key = f"{sheet_num}-{row_index}"
+            pointer = batch.get(sheet_key)
+            if not pointer:
+                skipped_no_batch += 1
+                continue
 
-    data_path = f"problems/{outcome}/{slug}/data/{current}.json"
-    data = fetch_problems_json(data_path)
-    k = len(data) if isinstance(data, list) else 0
-    return current, limit, k
+            submission = parse_submission(extract_json_string(row))
+            if not submission:
+                skipped_invalid += 1
+                continue
 
+            if "url" not in pointer or "index" not in pointer:
+                print(
+                    f"  Skipping {sheet_key} - batch entry missing url/index",
+                    file=sys.stderr,
+                )
+                skipped_invalid += 1
+                continue
 
-def assign_url_and_index(submissions, current, limit, k):
-    """
-    After-sync formula. problems has already appended these N submissions.
+            records.append({
+                "email": submission["email"],
+                "slug": submission["slug"],
+                "status": submission["status"],
+                "timestamp": int(submission["timestamp"]),
+                "language": submission["language"],
+                "url": pointer["url"],
+                "index": pointer["index"],
+            })
+            matched += 1
 
-        old_total = (current - 1) * limit + k - N
-        for i-th new row (oldest first):
-            global = old_total + i
-            url    = f"{global // limit + 1}.json"
-            index  = global % limit
-
-    Mutates each submission dict in place with 'url' and 'index'.
-    """
-    n = len(submissions)
-    if n == 0:
-        return
-
-    old_total = (current - 1) * limit + k - n
-    if old_total < 0:
+    print(
+        f"\nBatch keys: {len(batch)}, matched: {matched}, "
+        f"no-batch-key: {skipped_no_batch}, invalid: {skipped_invalid}"
+    )
+    if matched != len(batch):
         print(
-            f"ERROR: computed old_total={old_total} "
-            f"(current={current}, limit={limit}, k={k}, n={n}). "
-            "Problems repo state does not match this batch.",
+            f"WARNING: matched {matched} rows but batch has {len(batch)} keys. "
+            "Some sheet_keys may not have been found in today's sheet responses.",
             file=sys.stderr,
         )
-        sys.exit(1)
+    return records
 
-    for i, submission in enumerate(submissions):
-        global_pos = old_total + i
-        file_num = global_pos // limit + 1
-        submission["url"] = f"{file_num}.json"
-        submission["index"] = global_pos % limit
-
-
-def enrich_with_pointers(grouped):
-    """
-    For each problem bucket (accepted / errors), read the problems cursor
-    and attach url + index to every submission in that bucket.
-    """
-    for slug, submissions in grouped.items():
-        accepted, errors = split_accepted_errors(submissions)
-
-        if accepted:
-            current, limit, k = load_bucket_cursor(slug, "accepted")
-            print(
-                f"  [{slug}/accepted] N={len(accepted)} "
-                f"cursor current={current} limit={limit} k={k}"
-            )
-            assign_url_and_index(accepted, current, limit, k)
-
-        if errors:
-            current, limit, k = load_bucket_cursor(slug, "errors")
-            print(
-                f"  [{slug}/errors] N={len(errors)} "
-                f"cursor current={current} limit={limit} k={k}"
-            )
-            assign_url_and_index(errors, current, limit, k)
-
-
-# ---------------------------------------------------------------------------
-# Write users/<encoded-email>/data.json
-# ---------------------------------------------------------------------------
 
 def load_user_data(path):
     if os.path.exists(path):
@@ -292,38 +234,30 @@ def save_user_data(path, data):
         f.write("\n")
 
 
-def to_user_record(submission):
+def to_user_record(record):
     return {
-        "url": submission["url"],
-        "status": submission["status"],
-        "timestamp": int(submission["timestamp"]),
-        "index": submission["index"],
-        "language": submission["language"],
+        "url": record["url"],
+        "status": record["status"],
+        "timestamp": record["timestamp"],
+        "index": record["index"],
+        "language": record["language"],
     }
 
 
-def write_all_user_submissions(grouped):
-    """
-    Flatten all enriched submissions, group by email, append into each
-    user's data.json under submissions[slug].
-    """
+def write_all_user_submissions(records):
     by_email = defaultdict(list)
-    for slug, submissions in grouped.items():
-        for s in submissions:
-            by_email[s["email"]].append(s)
+    for record in records:
+        by_email[record["email"]].append(record)
 
     for email, subs in by_email.items():
-        # Keep per-user append order stable: by timestamp
-        subs.sort(key=lambda s: int(s["timestamp"]))
+        subs.sort(key=lambda s: s["timestamp"])
 
         folder = email_to_folder_name(email)
-        user_dir = os.path.join(USERS_BASE_DIR, folder)
-        data_path = os.path.join(user_dir, "data.json")
+        data_path = os.path.join(USERS_BASE_DIR, folder, "data.json")
         data = load_user_data(data_path)
 
         for s in subs:
-            slug = s["slug"]
-            data["submissions"].setdefault(slug, []).append(to_user_record(s))
+            data["submissions"].setdefault(s["slug"], []).append(to_user_record(s))
 
         save_user_data(data_path, data)
         print(f"  [{folder}] appended {len(subs)} submission(s)")
@@ -352,17 +286,19 @@ def main():
     sheet_urls = get_sheet_urls()
     print(f"Found {len(sheet_urls)} sheet URL(s) to sync.\n")
 
-    submissions = fetch_all_submissions(sheet_urls)
-    print(f"\nTotal valid submissions collected: {len(submissions)}")
+    print(f"Fetching {SYNC_BATCH_PATH} from problems repo...")
+    batch = fetch_sync_batch()
+    print(f"  Got {len(batch)} batch entr(ies)\n")
 
-    grouped = group_by_problem(submissions)
-    print(f"Grouped into {len(grouped)} distinct problem(s)")
+    if not batch:
+        print("Empty batch - nothing to write for users.")
+        log_sync_status()
+        return
 
-    print("\nResolving url/index from problems repo...")
-    enrich_with_pointers(grouped)
+    records = collect_user_records(sheet_urls, batch)
 
     print("\nWriting user data.json files...")
-    write_all_user_submissions(grouped)
+    write_all_user_submissions(records)
 
     log_sync_status()
 

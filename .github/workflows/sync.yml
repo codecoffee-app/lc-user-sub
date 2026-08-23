@@ -27,12 +27,11 @@ jobs:
         run: python scripts/sync.py
         env:
           SHEET_URLS: ${{ secrets.SHEET_URLS }}
-          DEFAULT_LIMIT: ${{ secrets.DEFAULT_LIMIT }}
           STATUS_SHEET_URL: ${{ secrets.STATUS_SHEET_URL }}
           PROBLEMS_REPO: ${{ secrets.PROBLEMS_REPO }}
-          PROBLEMS_REF: ${{ secrets.PROBLEMS_REF }}
-          # PAT (or fine-grained token) with read access to lc-problems-sub.
-          # Default GITHUB_TOKEN cannot read another private repo.
+          # Prefer SHA from problems dispatch; else secret/ref default (master).
+          PROBLEMS_REF: ${{ github.event.client_payload.problems_sha || secrets.PROBLEMS_REF }}
+          # Token with read access to lc-problems-sub (one call for sync-batch.json).
           PROBLEMS_READ_TOKEN: ${{ secrets.PROBLEMS_READ_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
