@@ -1,0 +1,22 @@
+{
+  "submissions": {
+    "select-all-employees": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1787514479828,
+        "index": 3,
+        "language": "mysql"
+      }
+    ],
+    "reverse-a-string": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1787514534660,
+        "index": 1,
+        "language": "javascript"
+      }
+    ]
+  }
+}

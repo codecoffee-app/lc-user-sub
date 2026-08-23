@@ -1,0 +1,22 @@
+{
+  "submissions": {
+    "a-difference-of-values-and-indexes0302": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1787514400153,
+        "index": 0,
+        "language": "cpp"
+      }
+    ],
+    "reverse-a-string": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1787514438518,
+        "index": 0,
+        "language": "javascript"
+      }
+    ]
+  }
+}
