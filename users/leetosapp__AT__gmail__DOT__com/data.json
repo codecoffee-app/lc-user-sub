@@ -1,0 +1,20 @@
+{
+  "submissions": {
+    "trapping-rain-water": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1787652739323,
+        "index": 0,
+        "language": "cpp"
+      },
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1787653032907,
+        "index": 1,
+        "language": "cpp"
+      }
+    ]
+  }
+}
