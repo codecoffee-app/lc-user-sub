@@ -1,0 +1,13 @@
+{
+  "submissions": {
+    "average-order-amount-per-employee": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791196927238,
+        "index": 0,
+        "language": "mysql"
+      }
+    ]
+  }
+}

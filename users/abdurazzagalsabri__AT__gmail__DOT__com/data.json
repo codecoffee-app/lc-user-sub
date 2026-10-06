@@ -1,0 +1,22 @@
+{
+  "submissions": {
+    "total-amount-of-all-orders": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791106949853,
+        "index": 0,
+        "language": "mysql"
+      }
+    ],
+    "employees-earning-above-50000": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791107055349,
+        "index": 0,
+        "language": "mysql"
+      }
+    ]
+  }
+}
