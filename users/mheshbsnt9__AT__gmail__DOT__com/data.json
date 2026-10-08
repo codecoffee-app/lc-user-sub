@@ -1,0 +1,13 @@
+{
+  "submissions": {
+    "employees-same-department-as-alice": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791366715084,
+        "index": 2,
+        "language": "mysql"
+      }
+    ]
+  }
+}

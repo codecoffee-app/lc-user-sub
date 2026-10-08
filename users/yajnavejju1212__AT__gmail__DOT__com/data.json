@@ -17,6 +17,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "employees-same-department-as-alice": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791343949585,
+        "index": 1,
+        "language": "mysql"
+      }
     ]
   }
 }

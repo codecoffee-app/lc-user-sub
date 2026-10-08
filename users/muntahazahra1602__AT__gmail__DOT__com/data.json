@@ -1,0 +1,13 @@
+{
+  "submissions": {
+    "cpp-string-is-empty": [
+      {
+        "url": "1.json",
+        "status": "Wrong Answer",
+        "timestamp": 1791404235960,
+        "index": 0,
+        "language": "cpp"
+      }
+    ]
+  }
+}
