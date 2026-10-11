@@ -44,6 +44,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "avg-salary-employees-orders-above-300": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791603609167,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
