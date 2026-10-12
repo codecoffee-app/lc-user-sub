@@ -53,6 +53,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "customers-from-california-cities": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791720435669,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
