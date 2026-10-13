@@ -62,6 +62,24 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "rank-employees-by-salary": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791794694293,
+        "index": 0,
+        "language": "mysql"
+      }
+    ],
+    "employees-salary-higher-than-average": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791865573882,
+        "index": 1,
+        "language": "mysql"
+      }
     ]
   }
 }

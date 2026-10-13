@@ -1,0 +1,13 @@
+{
+  "submissions": {
+    "employees-salary-higher-than-average": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791827997414,
+        "index": 0,
+        "language": "mysql"
+      }
+    ]
+  }
+}
