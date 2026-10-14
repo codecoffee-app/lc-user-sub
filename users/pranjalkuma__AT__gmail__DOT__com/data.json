@@ -1,0 +1,22 @@
+{
+  "submissions": {
+    "cpp-string-reverse-basic": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791888285162,
+        "index": 0,
+        "language": "cpp"
+      }
+    ],
+    "cpp-array-sum": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1791894437550,
+        "index": 0,
+        "language": "cpp"
+      }
+    ]
+  }
+}
