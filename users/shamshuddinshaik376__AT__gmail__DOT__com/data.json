@@ -1,0 +1,13 @@
+{
+  "submissions": {
+    "second-highest-salary": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792085616792,
+        "index": 1,
+        "language": "mysql"
+      }
+    ]
+  }
+}

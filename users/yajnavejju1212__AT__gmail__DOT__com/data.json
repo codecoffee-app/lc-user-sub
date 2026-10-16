@@ -89,6 +89,22 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "second-highest-salary": [
+      {
+        "url": "1.json",
+        "status": "Wrong Answer",
+        "timestamp": 1792036425735,
+        "index": 0,
+        "language": "mysql"
+      },
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792036443144,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
