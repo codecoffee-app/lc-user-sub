@@ -121,6 +121,15 @@
         "index": 1,
         "language": "mysql"
       }
+    ],
+    "employees-ordered-by-department-and-salary": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792238531676,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
