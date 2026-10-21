@@ -1,0 +1,22 @@
+{
+  "submissions": {
+    "select-all-employees": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792490059986,
+        "index": 1,
+        "language": "mysql"
+      }
+    ],
+    "employees-earning-above-50000": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792522779334,
+        "index": 2,
+        "language": "mysql"
+      }
+    ]
+  }
+}

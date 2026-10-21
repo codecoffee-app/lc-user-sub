@@ -1,0 +1,61 @@
+{
+  "submissions": {
+    "select-all-employees": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792499601669,
+        "index": 2,
+        "language": "mysql"
+      }
+    ],
+    "employees-earning-above-50000": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792499772327,
+        "index": 1,
+        "language": "mysql"
+      }
+    ],
+    "count-employees-per-department": [
+      {
+        "url": "1.json",
+        "status": "System Error",
+        "timestamp": 1792499997444,
+        "index": 0,
+        "language": "mysql"
+      },
+      {
+        "url": "1.json",
+        "status": "System Error",
+        "timestamp": 1792500029317,
+        "index": 1,
+        "language": "mysql"
+      },
+      {
+        "url": "1.json",
+        "status": "Wrong Answer",
+        "timestamp": 1792500069677,
+        "index": 2,
+        "language": "mysql"
+      },
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792500117105,
+        "index": 0,
+        "language": "mysql"
+      }
+    ],
+    "highest-paid-employee": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792500207942,
+        "index": 0,
+        "language": "mysql"
+      }
+    ]
+  }
+}
