@@ -1,0 +1,13 @@
+{
+  "submissions": {
+    "get-nested-value": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792722872557,
+        "index": 0,
+        "language": "javascript"
+      }
+    ]
+  }
+}

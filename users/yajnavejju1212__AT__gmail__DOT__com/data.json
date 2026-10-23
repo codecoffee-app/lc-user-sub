@@ -139,6 +139,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "employee-salary-category": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792669597717,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
