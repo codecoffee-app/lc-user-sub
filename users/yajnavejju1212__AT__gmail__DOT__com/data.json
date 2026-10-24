@@ -148,6 +148,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "departments-total-salary-greater-100000": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792753759266,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }

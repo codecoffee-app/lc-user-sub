@@ -8,6 +8,15 @@
         "index": 0,
         "language": "javascript"
       }
+    ],
+    "merge-two-objects": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792755752417,
+        "index": 0,
+        "language": "javascript"
+      }
     ]
   }
 }
