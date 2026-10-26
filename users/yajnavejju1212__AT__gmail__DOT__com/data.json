@@ -157,6 +157,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "department-salary-distribution-summary": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1792946468858,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
