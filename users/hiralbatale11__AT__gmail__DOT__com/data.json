@@ -1,0 +1,20 @@
+{
+  "submissions": {
+    "employees-earning-above-50000": [
+      {
+        "url": "1.json",
+        "status": "Wrong Answer",
+        "timestamp": 1793077941282,
+        "index": 0,
+        "language": "mysql"
+      },
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1793078239162,
+        "index": 3,
+        "language": "mysql"
+      }
+    ]
+  }
+}
