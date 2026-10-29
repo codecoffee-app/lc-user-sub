@@ -184,6 +184,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "top-earner-per-department": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1793164686651,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }

@@ -1,0 +1,13 @@
+{
+  "submissions": {
+    "top-earner-per-department": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1793179185922,
+        "index": 1,
+        "language": "mysql"
+      }
+    ]
+  }
+}
