@@ -1,0 +1,20 @@
+{
+  "submissions": {
+    "filter-polyfill": [
+      {
+        "url": "1.json",
+        "status": "Wrong Answer",
+        "timestamp": 1793383123192,
+        "index": 0,
+        "language": "javascript"
+      },
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1793383195174,
+        "index": 0,
+        "language": "javascript"
+      }
+    ]
+  }
+}
