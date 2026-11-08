@@ -193,6 +193,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "top-2-highest-paid-employees": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1794026048332,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
