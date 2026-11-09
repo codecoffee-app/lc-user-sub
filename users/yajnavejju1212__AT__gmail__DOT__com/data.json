@@ -202,6 +202,15 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "total-number-of-projects": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1794114321899,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
