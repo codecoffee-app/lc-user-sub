@@ -211,6 +211,24 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "total-salary-expense": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1794302165489,
+        "index": 0,
+        "language": "mysql"
+      }
+    ],
+    "employees-salary-between-range": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1794365771060,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
