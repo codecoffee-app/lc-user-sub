@@ -238,6 +238,24 @@
         "index": 0,
         "language": "mysql"
       }
+    ],
+    "employees-projects-after-2020": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1794578635258,
+        "index": 1,
+        "language": "mysql"
+      }
+    ],
+    "department-highest-average-salary": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1794627200899,
+        "index": 0,
+        "language": "mysql"
+      }
     ]
   }
 }
