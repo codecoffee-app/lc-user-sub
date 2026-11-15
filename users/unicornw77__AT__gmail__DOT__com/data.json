@@ -1,0 +1,13 @@
+{
+  "submissions": {
+    "department-highest-average-salary": [
+      {
+        "url": "1.json",
+        "status": "System Error",
+        "timestamp": 1794677577509,
+        "index": 0,
+        "language": "mysql"
+      }
+    ]
+  }
+}
