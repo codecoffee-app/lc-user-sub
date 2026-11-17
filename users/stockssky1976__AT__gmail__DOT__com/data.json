@@ -1,0 +1,22 @@
+{
+  "submissions": {
+    "multiply-two-promises": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1794828650834,
+        "index": 0,
+        "language": "javascript"
+      }
+    ],
+    "filter-even-numbers": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1794828764165,
+        "index": 0,
+        "language": "javascript"
+      }
+    ]
+  }
+}
