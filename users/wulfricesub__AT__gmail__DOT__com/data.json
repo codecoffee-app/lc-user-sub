@@ -1,0 +1,20 @@
+{
+  "submissions": {
+    "employees-same-department-as-alice": [
+      {
+        "url": "1.json",
+        "status": "Wrong Answer",
+        "timestamp": 1795040452116,
+        "index": 0,
+        "language": "mysql"
+      },
+      {
+        "url": "1.json",
+        "status": "Wrong Answer",
+        "timestamp": 1795040520229,
+        "index": 1,
+        "language": "mysql"
+      }
+    ]
+  }
+}
