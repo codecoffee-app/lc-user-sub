@@ -1,0 +1,22 @@
+{
+  "submissions": {
+    "avg-salary-employees-orders-above-300": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1795243941259,
+        "index": 1,
+        "language": "mysql"
+      }
+    ],
+    "customers-from-california-cities": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1795287657584,
+        "index": 1,
+        "language": "mysql"
+      }
+    ]
+  }
+}
