@@ -17,6 +17,15 @@
         "index": 1,
         "language": "mysql"
       }
+    ],
+    "rank-employees-by-salary": [
+      {
+        "url": "1.json",
+        "status": "Accepted",
+        "timestamp": 1795404386911,
+        "index": 1,
+        "language": "mysql"
+      }
     ]
   }
 }
